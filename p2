@@ -1,0 +1,344 @@
+import java.io.File; 
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+
+public class Sorter implements Cloneable {
+
+	private String[] array;
+	private File file;
+
+	public Sorter(String[] array, File file) throws FileNotFoundException {
+		this.array = array;
+		this.file = file;
+
+		int count = 0;
+
+		Scanner in = new Scanner(this.file);
+		while (in.hasNextLine()) {
+			String str = in.nextLine();
+			String[] tokens = str.split(" ");
+
+			for (int i = 0; i < tokens.length; i++) {
+				array[count++] = tokens[i];
+			}
+		}
+
+		in.close();
+	}
+
+	public String[] getArray() {
+		return array;
+	}
+
+	public void setArray(String[] array) {
+		this.array = array;
+	}
+
+	public void display() {
+		for (int i = 0; i < array.length; i++) {
+			System.out.print(array[i] + " ");
+		}
+		System.out.println("");
+	}
+
+	public void insertionSort() {
+		int in;
+		int out;
+		String key;
+
+		for (out = 1; out < array.length; out++) {
+			key = array[out];
+			in = out;
+			while (in > 0 && array[in - 1].compareTo(key) > 0) {
+				array[in] = array[in - 1];
+				in--;
+			}
+			array[in] = key;
+		}
+	}
+
+	public void shellSort() {
+		int inner;
+		int outer;
+
+		String key;
+
+		int h = 1;
+		while (h <= array.length / 3) {
+			h = h * 3 + 1;
+		}
+		while (h > 0) {
+			for (outer = h; outer < array.length; outer++) {
+				key = array[outer];
+				inner = outer;
+
+				while (inner > h - 1 && array[inner - h].compareTo(key) > 0) {
+					array[inner] = array[inner - h];
+					inner -= h;
+				}
+				array[inner] = key;
+			}
+			h = (h - 1) / 3;
+		}
+	}
+
+	public void merge(String[] workspace, int lowPtr, int highPtr, int upperBound) {
+		int j = 0;
+		int lowerBound = lowPtr;
+		int mid = highPtr - 1;
+		int n = upperBound - lowerBound + 1;
+
+		while (lowPtr <= mid && highPtr <= upperBound) {
+			if (array[lowPtr].compareTo(array[highPtr]) < 0) {
+				workspace[j++] = array[lowPtr++];
+			} else {
+				workspace[j++] = array[highPtr++];
+			}
+		}
+
+		while (lowPtr <= mid) {
+			workspace[j++] = array[lowPtr++];
+		}
+
+		while (highPtr <= upperBound) {
+			workspace[j++] = array[highPtr++];
+		}
+
+		for (j = 0; j < n; j++) {
+			array[lowerBound + j] = workspace[j];
+		}
+
+	}
+
+	public void recMergeSort(String[] workspace, int lowerBound, int upperBound) {
+		if (lowerBound == upperBound) {
+			return;
+		} else {
+			int mid = (lowerBound + upperBound) / 2;
+			recMergeSort(workspace, lowerBound, mid);
+			recMergeSort(workspace, mid + 1, upperBound);
+			merge(workspace, lowerBound, mid + 1, upperBound);
+		}
+	}
+
+	public void mergeSort() {
+		String[] workspace = new String[array.length];
+		recMergeSort(workspace, 0, array.length - 1);
+	}
+
+	public Sorter clone() throws CloneNotSupportedException {
+		Sorter sortClone = (Sorter) super.clone();
+		sortClone.array = array.clone();
+		return sortClone;
+	}
+}
+
+import java.io.File;
+import java.io.FileNotFoundException;
+
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+
+public class HW2 extends Application {
+
+	public static void main(String[] args) {
+		Application.launch(args);
+	}
+
+	@Override
+	public void start(Stage primaryStage) throws CloneNotSupportedException, FileNotFoundException {
+		String[] array1 = new String[100];
+		String[] array2 = new String[500];
+		String[] array3 = new String[1000];
+		String[] array4 = new String[2000];
+		String[] array5 = new String[3000];
+		String[] array6 = new String[5000];
+
+		File file1 = new File("data/text1.txt");
+		File file2 = new File("data/text2.txt");
+		File file3 = new File("data/text3.txt");
+		File file4 = new File("data/text4.txt");
+		File file5 = new File("data/text5.txt");
+		File file6 = new File("data/text6.txt");
+
+		Sorter i1 = new Sorter(array1, file1);
+		Sorter s1 = i1.clone();
+		Sorter m1 = i1.clone();
+
+		Sorter i2 = new Sorter(array2, file2);
+		Sorter s2 = i2.clone();
+		Sorter m2 = i2.clone();
+
+		Sorter i3 = new Sorter(array3, file3);
+		Sorter s3 = i3.clone();
+		Sorter m3 = i3.clone();
+
+		Sorter i4 = new Sorter(array4, file4);
+		Sorter s4 = i4.clone();
+		Sorter m4 = i4.clone();
+
+		Sorter i5 = new Sorter(array5, file5);
+		Sorter s5 = i5.clone();
+		Sorter m5 = i5.clone();
+
+		Sorter i6 = new Sorter(array6, file6);
+		Sorter s6 = i6.clone();
+		Sorter m6 = i6.clone();
+
+		long[] iSort = new long[6];
+		long[] sSort = new long[6];
+		long[] mSort = new long[6];
+
+		long t = System.nanoTime();
+		i1.insertionSort();
+		iSort[0] = System.nanoTime() - t;
+
+		t = System.nanoTime();
+		i2.insertionSort();
+		iSort[1] = System.nanoTime() - t;
+
+		t = System.nanoTime();
+		i3.insertionSort();
+		iSort[2] = System.nanoTime() - t;
+
+		t = System.nanoTime();
+		i4.insertionSort();
+		iSort[3] = System.nanoTime() - t;
+
+		t = System.nanoTime();
+		i5.insertionSort();
+		iSort[4] = System.nanoTime() - t;
+
+		t = System.nanoTime();
+		i6.insertionSort();
+		iSort[5] = System.nanoTime() - t;
+
+		t = System.nanoTime();
+		s1.shellSort();
+		sSort[0] = System.nanoTime() - t;
+
+		t = System.nanoTime();
+		s2.shellSort();
+		sSort[1] = System.nanoTime() - t;
+
+		t = System.nanoTime();
+		s3.shellSort();
+		sSort[2] = System.nanoTime() - t;
+
+		t = System.nanoTime();
+		s4.shellSort();
+		sSort[3] = System.nanoTime() - t;
+
+		t = System.nanoTime();
+		s5.shellSort();
+		sSort[4] = System.nanoTime() - t;
+
+		t = System.nanoTime();
+		s6.shellSort();
+		sSort[5] = System.nanoTime() - t;
+
+		t = System.nanoTime();
+		m1.mergeSort();
+		mSort[0] = System.nanoTime() - t;
+
+		t = System.nanoTime();
+		m1.mergeSort();
+		mSort[1] = System.nanoTime() - t;
+
+		t = System.nanoTime();
+		m1.mergeSort();
+		mSort[2] = System.nanoTime() - t;
+
+		t = System.nanoTime();
+		m1.mergeSort();
+		mSort[3] = System.nanoTime() - t;
+
+		t = System.nanoTime();
+		m1.mergeSort();
+		mSort[4] = System.nanoTime() - t;
+
+		t = System.nanoTime();
+		m1.mergeSort();
+		mSort[5] = System.nanoTime() - t;
+
+		
+		HBox box = new HBox();
+
+		TextArea ta = new TextArea();
+
+		box.getChildren().add(ta);
+
+		ta.setText("Insertion\t\tShell\t\t\tMerge\n");
+		
+		for (int i = 0; i < 6; i++) {
+			ta.setText(ta.getText() + iSort[i] + "\t\t" + sSort[i] + "\t\t" + mSort[i] + "\n");
+		}
+
+		CategoryAxis xAxis = new CategoryAxis();
+		NumberAxis yAxis = new NumberAxis();
+		BarChart<String, Number> bc = new BarChart<String, Number>(xAxis, yAxis);
+		bc.setTitle("Sorting Time");
+		xAxis.setLabel("Sorting Type");
+		yAxis.setLabel("Nano Time");
+
+		XYChart.Series series1 = new XYChart.Series();
+		series1.setName("100 times");
+		series1.getData().add(new XYChart.Data("Insertion", iSort[0]));
+		series1.getData().add(new XYChart.Data("Shell", sSort[0]));
+		series1.getData().add(new XYChart.Data("Merge", mSort[0]));
+
+		XYChart.Series series2 = new XYChart.Series();
+		series2.setName("500 times");
+		series2.getData().add(new XYChart.Data("Insertion", iSort[1]));
+		series2.getData().add(new XYChart.Data("Shell", sSort[1]));
+		series2.getData().add(new XYChart.Data("Merge", mSort[1]));
+
+		XYChart.Series series3 = new XYChart.Series();
+		series3.setName("1000 times");
+		series3.getData().add(new XYChart.Data("Insertion", iSort[2]));
+		series3.getData().add(new XYChart.Data("Shell", sSort[2]));
+		series3.getData().add(new XYChart.Data("Merge", mSort[2]));
+
+		XYChart.Series series4 = new XYChart.Series();
+		series4.setName("2000 times");
+		series4.getData().add(new XYChart.Data("Insertion", iSort[3]));
+		series4.getData().add(new XYChart.Data("Shell", sSort[3]));
+		series4.getData().add(new XYChart.Data("Merge", mSort[3]));
+
+		XYChart.Series series5 = new XYChart.Series();
+		series5.setName("3000 times");
+		series5.getData().add(new XYChart.Data("Insertion", iSort[4]));
+		series5.getData().add(new XYChart.Data("Shell", sSort[4]));
+		series5.getData().add(new XYChart.Data("Merge", mSort[4]));
+
+		XYChart.Series series6 = new XYChart.Series();
+		series6.setName("5000 times");
+		series6.getData().add(new XYChart.Data("Insertion", iSort[5]));
+		series6.getData().add(new XYChart.Data("Shell", sSort[5]));
+		series6.getData().add(new XYChart.Data("Merge", mSort[5]));
+
+		bc.getData().addAll(series1, series2, series3, series4, series5, series6);
+
+		BorderPane b = new BorderPane();
+		
+		b.setBottom(ta);
+		b.setCenter(bc);
+		
+		Scene scene = new Scene(b);
+		primaryStage.setScene(scene);
+		primaryStage.show();
+
+	}
+}
