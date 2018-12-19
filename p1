@@ -1,0 +1,164 @@
+public class Link {
+	private String name;
+	private int score;
+	private Link next;
+
+	public Link(String name, int score) {
+		super();
+		this.name = name;
+		this.score = score;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public int getScore() {
+		return score;
+	}
+
+	public void setScore(int score) {
+		this.score = score;
+	}
+
+	public Link getNext() {
+		return next;
+	}
+
+	public void setNext(Link next) {
+		this.next = next;
+	}
+	
+	public void displayLink(){
+		System.out.println(name + " " + score);
+	}
+}
+
+public class LinkList {
+	private Link first;
+	private int max = 0;
+
+	public LinkList() {
+		first = null;
+	}
+
+	public boolean isEmpty() {
+		return first == null;
+	}
+
+	public void insert(String name, int score) {
+		Link newLink = new Link(name, score);
+
+		if (isEmpty()) {
+			first = newLink;
+			max++;
+			return;
+		} else if (first.getScore() < newLink.getScore()) {
+
+			newLink.setNext(first);
+			first = newLink;
+			max++;
+
+			if (max > 5) {
+				Link temp = first;
+				int count = 1;
+
+				while (count < 4) {
+					temp = temp.getNext();
+					count++;
+				}
+				temp.getNext().setNext(null);
+			}
+		} else {
+			Link temp = first;
+			while (temp.getNext() != null) {
+				int count = 0;
+				if (newLink.getScore() > temp.getNext().getScore()) {
+					newLink.setNext(temp.getNext());
+					temp.setNext(newLink);
+					max++;
+
+					if (max > 5) {
+						while (count < 4) {
+							temp = temp.getNext();
+							count++;
+						}
+						temp.setNext(null);
+					}
+					return;
+				}
+
+				temp = temp.getNext();
+				count++;
+			}
+			if (max < 5)
+				temp.setNext(newLink);
+		}
+	}
+
+	public void displayList() {
+		System.out.println("List (first --> last):");
+		Link current = first;
+		while (current != null) {
+			current.displayLink();
+			current = current.getNext();
+		}
+		System.out.println();
+	}
+	
+	
+	public String stringDisplayList() {
+		String top = "Top Players and Score:\nName\tScore\n";
+
+		Link current = first;
+
+		while (current != null) {
+			top = top + current.getName() + "\t\t" + current.getScore() + "\n" ;
+			current = current.getNext();
+		}
+		return top;
+	}
+}
+
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.control.TextArea;
+import javafx.scene.layout.HBox;
+import javafx.stage.Stage;
+
+public class HW1 extends Application {
+
+	public static void main(String[] args) {
+		Application.launch(args);
+	}
+
+	@Override
+	public void start(Stage primaryStage) {
+
+		LinkList theList = new LinkList();
+
+		theList.insert("A", 1);
+		theList.insert("B", 2);
+		theList.insert("C", 3);
+		theList.insert("D", 7);
+		theList.insert("E", 5);
+		theList.insert("F", 6);
+
+		HBox box = new HBox();
+
+		TextArea ta = new TextArea();
+
+		box.getChildren().add(ta);
+
+		ta.setText(theList.stringDisplayList());
+
+		Scene scene = new Scene(box, 300, 200);
+		primaryStage.setScene(scene);
+		primaryStage.show();
+	}
+
+}
